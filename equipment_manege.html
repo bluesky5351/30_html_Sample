@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>備品管理システム</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .input-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            min-width: 80px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="file"] {
+            padding: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .download-btn {
+            background-color: #28a745;
+        }
+        .download-btn:hover {
+            background-color: #1e7e34;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .status-indicator {
+            text-align: center;
+            font-size: 18px;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 備品管理システム</h1>
+        
+        <div class="input-section">
+            <div class="form-group">
+                <label>エクセルファイル:</label>
+                <input type="file" id="fileInput" accept=".xlsx,.xls" />
+                <button onclick="loadExcel()">読み込み</button>
+            </div>
+            
+            <div class="form-group">
+                <label>品番:</label>
+                <input type="text" id="itemCode" placeholder="品番を入力してください" />
+                <div class="controls">
+                    <button onclick="addOrUpdateItem()">登録/更新</button>
+                    <button class="download-btn" onclick="downloadExcel()">エクセル保存</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="message"></div>
+
+        <table id="inventoryTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>品番</th>
+                    <th>在庫有無</th>
+                    <th>初回登録</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let inventoryData = [];
+
+        // 初期データを設定
+        function initializeData() {
+            inventoryData = [
+                ['品番', '在庫有無', '初回登録']
+            ];
+        }
+
+        // エクセルファイルを読み込む
+        function loadExcel() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showMessage('ファイルを選択してください。', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                    
+                    if (jsonData.length > 0) {
+                        inventoryData = jsonData;
+                        showMessage('エクセルファイルを正常に読み込みました。', 'success');
+                        displayTable();
+                    } else {
+                        initializeData();
+                        showMessage('空のファイルです。新しいデータベースを作成しました。', 'success');
+                        displayTable();
+                    }
+                } catch (error) {
+                    showMessage('ファイルの読み込みに失敗しました。', 'error');
+                    console.error(error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 品番を追加または更新
+        function addOrUpdateItem() {
+            const itemCode = document.getElementById('itemCode').value.trim();
+            
+            if (!itemCode) {
+                showMessage('品番を入力してください。', 'error');
+                return;
+            }
+
+            // データが初期化されていない場合は初期化
+            if (inventoryData.length === 0) {
+                initializeData();
+            }
+
+            // 既存の品番を検索
+            let found = false;
+            for (let i = 1; i < inventoryData.length; i++) {
+                if (inventoryData[i][0] === itemCode) {
+                    // 既存の品番が見つかった場合、在庫有無を●に更新
+                    inventoryData[i][1] = '●';
+                    showMessage(`品番「${itemCode}」の在庫有無を更新しました。`, 'success');
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                // 新しい品番を追加
+                inventoryData.push([itemCode, '', '●']);
+                showMessage(`品番「${itemCode}」を新規登録しました。`, 'success');
+            }
+
+            // 入力フィールドをクリア
+            document.getElementById('itemCode').value = '';
+            
+            // テーブルを更新
+            displayTable();
+        }
+
+        // テーブルを表示
+        function displayTable() {
+            const table = document.getElementById('inventoryTable');
+            const tbody = document.getElementById('tableBody');
+            
+            // テーブルボディをクリア
+            tbody.innerHTML = '';
+            
+            // データ行を追加（ヘッダー行をスキップ）
+            for (let i = 1; i < inventoryData.length; i++) {
+                const row = tbody.insertRow();
+                const data = inventoryData[i];
+                
+                // 品番
+                const cell1 = row.insertCell(0);
+                cell1.textContent = data[0] || '';
+                
+                // 在庫有無
+                const cell2 = row.insertCell(1);
+                cell2.className = 'status-indicator';
+                cell2.textContent = data[1] || '';
+                
+                // 初回登録
+                const cell3 = row.insertCell(2);
+                cell3.className = 'status-indicator';
+                cell3.textContent = data[2] || '';
+            }
+            
+            table.style.display = 'table';
+        }
+
+        // エクセルファイルをダウンロード
+        function downloadExcel() {
+            if (inventoryData.length === 0) {
+                showMessage('データがありません。', 'error');
+                return;
+            }
+
+            const worksheet = XLSX.utils.aoa_to_sheet(inventoryData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "備品管理");
+            
+            // 現在の日時でファイル名を生成
+            const now = new Date();
+            const filename = `備品管理_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.xlsx`;
+            
+            XLSX.writeFile(workbook, filename);
+            showMessage('エクセルファイルをダウンロードしました。', 'success');
+        }
+
+        // メッセージを表示
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            
+            // 3秒後にメッセージを消去
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = '';
+            }, 3000);
+        }
+
+        // Enterキーで登録
+        document.getElementById('itemCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addOrUpdateItem();
+            }
+        });
+
+        // 初期化
+        initializeData();
+        displayTable();
+    </script>
+</body>
+</html>
