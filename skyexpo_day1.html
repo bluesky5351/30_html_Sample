@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Slideshow</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #000000;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .slideshow-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(255,255,255,0.1);
+            overflow: hidden;
+            aspect-ratio: 16/9;
+        }
+        
+        .slide {
+            display: none;
+            padding: 30px;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        
+        .slide.active {
+            display: block;
+        }
+        
+        .slide-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .page-indicator {
+            font-size: 1.2em;
+            color: #cccccc;
+            margin: 0;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            height: calc(100% - 80px);
+        }
+        
+        .product-card {
+            background-color: #2a2a2a;
+            border: 1px solid #444444;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 350px;
+            background-color: #333333;
+            border-radius: 5px;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666666;
+            font-size: 0.9em;
+            border: 1px solid #444444;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background-color: #4ecdc4;
+            transition: width 3s linear;
+        }
+        
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .slideshow-container {
+                aspect-ratio: 16/9;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <!-- Page 1 -->
+        <div class="slide active">
+            <div class="slide-header">
+                <div class="page-indicator">1 / 5</div>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_01.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_02.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_03.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_04.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_05.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_06.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_07.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_08.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_09.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_10.jpg');"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page 2 -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="page-indicator">2 / 5</div>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_11.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_12.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_13.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_14.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_15.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_16.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_17.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_18.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_19.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_20.jpg');"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page 3 -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="page-indicator">3 / 5</div>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_21.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_22.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_23.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_24.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_25.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_26.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_27.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_28.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_29.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_30.jpg');"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page 4 -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="page-indicator">4 / 5</div>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_31.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_32.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_33.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_34.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_35.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_36.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_37.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_38.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_39.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_40.jpg');"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page 5 -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="page-indicator">5 / 5</div>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_41.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_42.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_43.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_44.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_45.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_46.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_47.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_48.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_49.jpg');"></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image" style="background-image: url('products/product_50.jpg');"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="progress-bar"></div>
+    </div>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.querySelector('.progress-bar');
+        const totalSlides = slides.length;
+        const interval = 1000; // 1 second
+        
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            
+            progressBar.style.width = '0%';
+            progressBar.style.transition = 'none';
+            
+            requestAnimationFrame(() => {
+                progressBar.style.transition = `width ${interval}ms linear`;
+                progressBar.style.width = '100%';
+            });
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+        
+        showSlide(0);
+        progressBar.style.width = '100%';
+        
+        const slideInterval = setInterval(nextSlide, interval);
+        
+        window.addEventListener('unload', () => {
+            clearInterval(slideInterval);
+        });
+    </script>
+</body>
+</html>
