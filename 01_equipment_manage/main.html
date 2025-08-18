@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>備品管理システム</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        label, input, button { display: block; margin-bottom: 10px; }
+        input[type="text"] { width: 95%; padding: 8px; }
+        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .message { margin-top: 20px; padding: 10px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>備品管理システム</h2>
+        <form action="process.php" method="post">
+            <label for="itemNumber">品番を入力してください:</label>
+            <input type="text" id="itemNumber" name="itemNumber" required>
+            <button type="submit">登録</button>
+        </form>
+    </div>
+
+</body>
+</html>
