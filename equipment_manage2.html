@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>機材管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .controls {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .input-field {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .input-field:focus {
+            border-color: #667eea;
+            transform: scale(1.02);
+        }
+
+        .equipment-table {
+            padding: 30px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+
+        .status-available {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .status-unavailable {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .status-date {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-left: 10px;
+        }
+
+        .qr-scanner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .scanner-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        #qr-video {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ 機材管理システム</h1>
+            <p>QRコードスキャンで機材の在庫状況を管理</p>
+        </div>
+
+        <div class="controls">
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="startQRScanner()">📱 QRコードスキャン</button>
+                <button class="btn btn-success" onclick="addEquipment()">➕ 機材追加</button>
+                <button class="btn btn-warning" onclick="resetData()">🔄 データリセット</button>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="equipmentNumber" class="input-field" placeholder="機材番号を入力">
+                <input type="text" id="borrowerName" class="input-field" placeholder="貸出者名を入力">
+                <button class="btn btn-primary" onclick="manualCheck()">✅ 手動チェック</button>
+            </div>
+        </div>
+
+        <div class="equipment-table">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div>総機材数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="availableCount">0</div>
+                    <div>在庫あり</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="unavailableCount">0</div>
+                    <div>在庫なし</div>
+                </div>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>機材番号</th>
+                            <th>在庫状況</th>
+                            <th>貸出者</th>
+                            <th>最終更新</th>
+                        </tr>
+                    </thead>
+                    <tbody id="equipmentList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="qr-scanner" id="qrScanner">
+        <button class="close-btn" onclick="stopQRScanner()">×</button>
+        <div class="scanner-container">
+            <h3>📱 QRコードをスキャン</h3>
+            <video id="qr-video" autoplay muted playsinline></video>
+            <p>QRコードをカメラに向けてください</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qr-scanner/1.4.2/qr-scanner.umd.min.js"></script>
+    <script>
+        // データベース（ローカルストレージを使用）
+        let equipmentDB = JSON.parse(localStorage.getItem('equipmentDB')) || {};
+        
+        // QRスキャナー
+        let qrScanner = null;
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            // デモデータを初期化（初回のみ）
+            if (Object.keys(equipmentDB).length === 0) {
+                initializeDemoData();
+            }
+            updateDisplay();
+        });
+
+        // デモデータの初期化
+        function initializeDemoData() {
+            const demoEquipment = [
+                'EQ001', 'EQ002', 'EQ003', 'EQ004', 'EQ005',
+                'PC001', 'PC002', 'PC003', 'CAM001', 'CAM002',
+                'MIC001', 'MIC002', 'PROJ001', 'PROJ002', 'TAB001'
+            ];
+            
+                            demoEquipment.forEach(id => {
+                equipmentDB[id] = {
+                    available: false,
+                    borrower: '',
+                    lastUpdated: null
+                };
+            });
+            
+            saveData();
+            showAlert('デモデータを初期化しました', 'success');
+        }
+
+        // データの保存
+        function saveData() {
+            localStorage.setItem('equipmentDB', JSON.stringify(equipmentDB));
+        }
+
+        // 表示の更新
+        function updateDisplay() {
+            const tbody = document.getElementById('equipmentList');
+            tbody.innerHTML = '';
+
+            let totalCount = 0;
+            let availableCount = 0;
+            let unavailableCount = 0;
+
+            // 機材番号でソート
+            const sortedEquipment = Object.keys(equipmentDB).sort();
+
+            sortedEquipment.forEach(equipmentId => {
+                const equipment = equipmentDB[equipmentId];
+                totalCount++;
+                
+                const row = document.createElement('tr');
+                
+                const statusText = equipment.available ? '在庫あり' : '在庫なし';
+                const statusClass = equipment.available ? 'status-available' : 'status-unavailable';
+                const dateText = equipment.lastUpdated ? `(${equipment.lastUpdated})` : '';
+                const borrowerText = equipment.borrower || '－';
+                
+                if (equipment.available) {
+                    availableCount++;
+                } else {
+                    unavailableCount++;
+                }
+
+                row.innerHTML = `
+                    <td><strong>${equipmentId}</strong></td>
+                    <td class="${statusClass}">
+                        ${statusText}
+                        <span class="status-date">${dateText}</span>
+                    </td>
+                    <td>${borrowerText}</td>
+                    <td>${equipment.lastUpdated || '未更新'}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+
+            // 統計の更新
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('availableCount').textContent = availableCount;
+            document.getElementById('unavailableCount').textContent = unavailableCount;
+        }
+
+        // QRスキャナーの開始
+        function startQRScanner() {
+            const videoElement = document.getElementById('qr-video');
+            const scannerElement = document.getElementById('qrScanner');
+            
+            scannerElement.style.display = 'flex';
+            
+            qrScanner = new QrScanner(
+                videoElement,
+                result => {
+                    handleQRResult(result.data);
+                    stopQRScanner();
+                },
+                {
+                    returnDetailedScanResult: true,
+                    highlightScanRegion: true,
+                    highlightCodeOutline: true,
+                }
+            );
+            
+            qrScanner.start().catch(err => {
+                console.error('QRスキャナーの開始に失敗:', err);
+                showAlert('カメラにアクセスできませんでした', 'error');
+                stopQRScanner();
+            });
+        }
+
+        // QRスキャナーの停止
+        function stopQRScanner() {
+            if (qrScanner) {
+                qrScanner.stop();
+                qrScanner.destroy();
+                qrScanner = null;
+            }
+            document.getElementById('qrScanner').style.display = 'none';
+        }
+
+        // QR結果の処理
+        function handleQRResult(data) {
+            const equipmentId = data.trim();
+            const borrowerName = document.getElementById('borrowerName').value.trim();
+            
+            if (equipmentDB.hasOwnProperty(equipmentId)) {
+                const today = new Date().toLocaleDateString('ja-JP');
+                const equipment = equipmentDB[equipmentId];
+                
+                // 貸出者の処理ロジック
+                if (!equipment.borrower) {
+                    // データベースの貸出者が空欄の場合
+                    equipment.borrower = borrowerName;
+                    equipment.available = borrowerName ? false : true; // 貸出者がいる場合は在庫なし
+                    equipment.lastUpdated = today;
+                    
+                    if (borrowerName) {
+                        showAlert(`機材 ${equipmentId} を ${borrowerName} さんに貸出しました`, 'success');
+                    } else {
+                        showAlert(`機材 ${equipmentId} を「在庫あり」に更新しました`, 'success');
+                    }
+                } else {
+                    // データベースの貸出者が空欄以外の場合
+                    if (borrowerName === equipment.borrower) {
+                        // 入力値がデータベースと一致 → 返却
+                        equipment.borrower = '';
+                        equipment.available = true;
+                        equipment.lastUpdated = today;
+                        showAlert(`機材 ${equipmentId} が ${borrowerName} さんから返却されました`, 'success');
+                    } else {
+                        // 入力値がデータベースと不一致 → 新たな貸出
+                        const previousBorrower = equipment.borrower;
+                        equipment.borrower = borrowerName;
+                        equipment.available = borrowerName ? false : true;
+                        equipment.lastUpdated = today;
+                        
+                        if (borrowerName) {
+                            showAlert(`機材 ${equipmentId} を ${borrowerName} さんに貸出しました（前回：${previousBorrower}）`, 'success');
+                        } else {
+                            showAlert(`機材 ${equipmentId} を「在庫あり」に更新しました`, 'success');
+                        }
+                    }
+                }
+                
+                saveData();
+                updateDisplay();
+                document.getElementById('borrowerName').value = '';
+            } else {
+                showAlert(`機材番号 ${equipmentId} は登録されていません`, 'error');
+            }
+        }
+
+        // 手動チェック
+        function manualCheck() {
+            const equipmentNumber = document.getElementById('equipmentNumber').value.trim();
+            
+            if (!equipmentNumber) {
+                showAlert('機材番号を入力してください', 'error');
+                return;
+            }
+            
+            handleQRResult(equipmentNumber);
+            document.getElementById('equipmentNumber').value = '';
+        }
+
+        // 機材追加
+        function addEquipment() {
+            const equipmentId = prompt('追加する機材番号を入力してください:');
+            
+            if (equipmentId && equipmentId.trim()) {
+                const id = equipmentId.trim();
+                
+                if (equipmentDB.hasOwnProperty(id)) {
+                    showAlert('この機材番号は既に登録されています', 'error');
+                } else {
+                    equipmentDB[id] = {
+                        available: false,
+                        borrower: '',
+                        lastUpdated: null
+                    };
+                    saveData();
+                    updateDisplay();
+                    showAlert(`機材 ${id} を追加しました`, 'success');
+                }
+            }
+        }
+
+        // データリセット
+        function resetData() {
+            if (confirm('全ての機材データをリセットしますか？\nこの操作は取り消せません。')) {
+                equipmentDB = {};
+                saveData();
+                initializeDemoData();
+                updateDisplay();
+            }
+        }
+
+        // アラート表示
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            container.innerHTML = '';
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Enterキーでの手動チェック
+        document.getElementById('equipmentNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                manualCheck();
+            }
+        });
+        
+        document.getElementById('borrowerName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                manualCheck();
+            }
+        });
+    </script>
+</body>
+</html>
